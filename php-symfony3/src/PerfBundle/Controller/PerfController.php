@@ -12,4 +12,3 @@ class PerfController extends Controller
         return $this->render('PerfBundle:Default:index.html.twig');
     }
 }
-}
