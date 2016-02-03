@@ -19,7 +19,7 @@ class benchmark {
         $totalTime = $totalTime + $this->benchmark_Loops();
         $totalTime = $totalTime + $this->benchmark_IfElse();
         echo str_pad("#", 40, "#") . "\n" . str_pad("Total:", 27) . " : " . number_format($totalTime, 3) . " sec.</pre>";
-        echo sprintf('%f: ', $i), $this->convert(memory_get_usage(true) - $baseMemory), "\n";
+        echo sprintf('%f: ', $i), $this->convert(memory_get_usage() - $baseMemory), "\n";
     }
 
     function microtime_float() {
@@ -29,7 +29,7 @@ class benchmark {
 
     function benchmark_Math($runCount = 150000) {
         $startTime = $this->microtime_float();
-        $baseMemory = memory_get_usage(true);
+        $baseMemory = memory_get_usage();
 
         $functions = array("abs", "acos", "asin", "atan", "bindec", "floor", "exp", "sin", "tan", "pi", "is_finite", "is_nan", "sqrt");
         for ($i = 0; $i < $runCount; $i++) {
@@ -39,14 +39,14 @@ class benchmark {
         }
         $time = $this->microtime_float() - $startTime;
         echo str_pad("Math", 27) . " : " . number_format($time, 3) . " sec.\n";
-        echo sprintf('%f: ', $i), $this->convert(memory_get_usage(true) - $baseMemory), "\n";
+        echo sprintf('%f: ', $i), $this->convert(memory_get_usage() - $baseMemory), "\n";
 
         return $time;
     }
 
     function benchmark_StringManipulation($runCount = 150000) {
         $startTime = $this->microtime_float();
-        $baseMemory = memory_get_usage(true);
+        $baseMemory = memory_get_usage();
 
         $functions = array("addslashes", "chunk_split", "metaphone", "strip_tags", "md5", "sha1", "strtoupper", "strtolower", "strrev", "strlen", "soundex", "ord");
         $string = "the quick brown fox jumps over the lazy dog";
@@ -57,14 +57,14 @@ class benchmark {
         }
         $time = $this->microtime_float() - $startTime;
         echo str_pad("String Manipulation", 27) . " : " . number_format($time, 3) . " sec.\n";
-        echo sprintf('%f: ', $i), $this->convert(memory_get_usage(true) - $baseMemory), "\n";
+        echo sprintf('%f: ', $i), $this->convert(memory_get_usage() - $baseMemory), "\n";
 
         return $time;
     }
 
     function benchmark_Loops($runCount = 10000000) {
         $startTime = $this->microtime_float();
-        $baseMemory = memory_get_usage(true);
+        $baseMemory = memory_get_usage();
 
         for ($i = 0; $i < $runCount; ++$i)
             ;
@@ -80,7 +80,7 @@ class benchmark {
 
     function benchmark_IfElse($runCount = 10000000) {
         $startTime = $this->microtime_float();
-        $baseMemory = memory_get_usage(true);
+        $baseMemory = memory_get_usage();
 
         for ($i = 0; $i < $runCount; $i++) {
             if ($i == -1) {
@@ -93,13 +93,13 @@ class benchmark {
         }
         $time = $this->microtime_float() - $startTime;
         echo str_pad("If/Else", 27) . " : " . number_format($time, 3) . " sec.\n";
-        echo sprintf('%f: ', $i), $this->convert(memory_get_usage(true) - $baseMemory), "\n";
+        echo sprintf('%f: ', $i), $this->convert(memory_get_usage() - $baseMemory), "\n";
 
         return $time;
     }
 
     function echo_memory_usage() {
-        $mem_usage = memory_get_usage(true);
+        $mem_usage = memory_get_usage();
 
         if ($mem_usage < 1024)
             echo $mem_usage . " bytes";

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="PerfBundle\Entity\Products" table="products">
+    <indexes>
+      <index name="productLine" columns="productLine"/>
+    </indexes>
+    <id name="productcode" type="string" column="productCode" length="15">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="productname" type="string" column="productName" length="70" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="productscale" type="string" column="productScale" length="10" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="productvendor" type="string" column="productVendor" length="50" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="productdescription" type="text" column="productDescription" length="65535" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="quantityinstock" type="smallint" column="quantityInStock" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="buyprice" type="float" column="buyPrice" precision="10" scale="0" nullable="false"/>
+    <field name="msrp" type="float" column="MSRP" precision="10" scale="0" nullable="false"/>
+    <many-to-one field="productline" target-entity="Productlines" fetch="LAZY">
+      <join-columns>
+        <join-column name="productLine" referenced-column-name="productLine"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-many field="ordernumber" target-entity="Orders" mapped-by="productcode" fetch="LAZY"/>
+  </entity>
+</doctrine-mapping>

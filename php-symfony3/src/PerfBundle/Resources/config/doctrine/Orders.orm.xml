@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="PerfBundle\Entity\Orders" table="orders">
+    <indexes>
+      <index name="customerNumber" columns="customerNumber"/>
+    </indexes>
+    <id name="ordernumber" type="integer" column="orderNumber">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="orderdate" type="date" column="orderDate" nullable="false"/>
+    <field name="requireddate" type="date" column="requiredDate" nullable="false"/>
+    <field name="shippeddate" type="date" column="shippedDate" nullable="true"/>
+    <field name="status" type="string" column="status" length="15" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="comments" type="text" column="comments" length="65535" nullable="true">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <many-to-one field="customernumber" target-entity="Customers" fetch="LAZY">
+      <join-columns>
+        <join-column name="customerNumber" referenced-column-name="customerNumber"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-many field="productcode" target-entity="Products" inversed-by="ordernumber" fetch="LAZY">
+      <join-table name="orderdetails">
+        <join-columns>
+          <join-column name="orderNumber" referenced-column-name="orderNumber"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="productCode" referenced-column-name="productCode"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+  </entity>
+</doctrine-mapping>

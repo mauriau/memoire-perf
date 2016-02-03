@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Offices list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>City</th>
+                <th>Phone</th>
+                <th>Addressline1</th>
+                <th>Addressline2</th>
+                <th>State</th>
+                <th>Country</th>
+                <th>Postalcode</th>
+                <th>Territory</th>
+                <th>Officecode</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for office in offices %}
+            <tr>
+                <td><a href="{{ path('offices_show', { 'id': office.officecode }) }}">{{ office.city }}</a></td>
+                <td>{{ office.phone }}</td>
+                <td>{{ office.addressline1 }}</td>
+                <td>{{ office.addressline2 }}</td>
+                <td>{{ office.state }}</td>
+                <td>{{ office.country }}</td>
+                <td>{{ office.postalcode }}</td>
+                <td>{{ office.territory }}</td>
+                <td>{{ office.officecode }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('offices_show', { 'id': office.officecode }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('offices_edit', { 'id': office.officecode }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('offices_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

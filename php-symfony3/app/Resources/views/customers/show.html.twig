@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Customers</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Customername</th>
+                <td>{{ customer.customername }}</td>
+            </tr>
+            <tr>
+                <th>Contactlastname</th>
+                <td>{{ customer.contactlastname }}</td>
+            </tr>
+            <tr>
+                <th>Contactfirstname</th>
+                <td>{{ customer.contactfirstname }}</td>
+            </tr>
+            <tr>
+                <th>Phone</th>
+                <td>{{ customer.phone }}</td>
+            </tr>
+            <tr>
+                <th>Addressline1</th>
+                <td>{{ customer.addressline1 }}</td>
+            </tr>
+            <tr>
+                <th>Addressline2</th>
+                <td>{{ customer.addressline2 }}</td>
+            </tr>
+            <tr>
+                <th>City</th>
+                <td>{{ customer.city }}</td>
+            </tr>
+            <tr>
+                <th>State</th>
+                <td>{{ customer.state }}</td>
+            </tr>
+            <tr>
+                <th>Postalcode</th>
+                <td>{{ customer.postalcode }}</td>
+            </tr>
+            <tr>
+                <th>Country</th>
+                <td>{{ customer.country }}</td>
+            </tr>
+            <tr>
+                <th>Creditlimit</th>
+                <td>{{ customer.creditlimit }}</td>
+            </tr>
+            <tr>
+                <th>Customernumber</th>
+                <td>{{ customer.customernumber }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('customers_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('customers_edit', { 'id': customer.customernumber }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

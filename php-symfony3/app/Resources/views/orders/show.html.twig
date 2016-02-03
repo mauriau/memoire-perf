@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Orders</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Orderdate</th>
+                <td>{% if order.orderdate %}{{ order.orderdate|date('Y-m-d') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Requireddate</th>
+                <td>{% if order.requireddate %}{{ order.requireddate|date('Y-m-d') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Shippeddate</th>
+                <td>{% if order.shippeddate %}{{ order.shippeddate|date('Y-m-d') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{{ order.status }}</td>
+            </tr>
+            <tr>
+                <th>Comments</th>
+                <td>{{ order.comments }}</td>
+            </tr>
+            <tr>
+                <th>Ordernumber</th>
+                <td>{{ order.ordernumber }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('orders_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('orders_edit', { 'id': order.ordernumber }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

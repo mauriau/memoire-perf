@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="PerfBundle\Entity\Payments" table="payments">
+    <indexes>
+      <index name="IDX_65D29B32D53183C5" columns="customerNumber"/>
+    </indexes>
+    <id name="checknumber" type="string" column="checkNumber" length="50"/>
+    <id name="customernumber" association-key="true"/>
+    <field name="paymentdate" type="date" column="paymentDate" nullable="false"/>
+    <field name="amount" type="float" column="amount" precision="10" scale="0" nullable="false"/>
+    <one-to-one field="customernumber" target-entity="Customers" fetch="LAZY">
+      <join-columns>
+        <join-column name="customerNumber" referenced-column-name="customerNumber"/>
+      </join-columns>
+    </one-to-one>
+  </entity>
+</doctrine-mapping>
