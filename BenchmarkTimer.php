@@ -77,8 +77,8 @@ class BenchmarkTimer
         echo str_pad($time_itle, 23) . " : " . number_format($time, 5) . " sec et ";
         $this->totalTime += $time;
         unset($time, $usec, $this->string_ec);
-        echo $this->convert($memory);
-        $this->totalMemory += $memory;
+        echo $this->convert($memory - $this->startMemory);
+        $this->totalMemory += $memory - $this->startMemory;
     }
 
     protected function convert($size)
