@@ -2,11 +2,7 @@
 
 // php benchmarker by Paul Taulborg (njaguar at http://forums.d2jsp.org) - Modified by Jeroen Post
 
-$timer = new benchmarkTimer();
-
-exit; // all done
-
-class benchmarkTimer
+class BenchmarkTimer
 {
 
     public $startTime;
@@ -40,25 +36,25 @@ class benchmarkTimer
         $methods = get_class_methods($this);
         unset($methods[0], $methods[1], $methods[2], $methods[3]);
         $methods = array_values($methods);
-//        foreach ($methods as $key => $method) {
-//            $this->$method();
-//        }
-        $test = [
-            $methods[0],
-            $methods[1],
-            $methods[2],
-            $methods[3],
-            $methods[4],
-            $methods[5],
-            $methods[6],
-        ];
-        foreach ($test as $key => $method){
+        foreach ($methods as $key => $method) {
             $this->$method();
-            $this->$methods[$key]();
         }
-        for ($i = 0; $i< 5; $i++){
-            $this->$methods[$i]();
-        }
+//        $test = [
+//            $methods[0],
+//            $methods[1],
+//            $methods[2],
+//            $methods[3],
+//            $methods[4],
+//            $methods[5],
+//            $methods[6],
+//        ];
+//        foreach ($test as $key => $method) {
+//            $this->$method();
+//            $this->$methods[$key]();
+//        }
+//        for ($i = 0; $i < 5; $i++) {
+//            $this->$methods[$i]();
+//        }
         echo $head . "\n" . str_pad("Total", 23) . " : " . number_format($this->totalTime, 3) . " sec</pre>\n";
         echo $head . "\n" . $this->convert($this->totalMemory);
     }
@@ -66,22 +62,23 @@ class benchmarkTimer
     protected function start()
     {
 // use this method, because old php 4.x branches do not support the parameter to return a float
-        list($usec, $string_ec) = explode(" ", microtime());
+        list($usec, $this->string_ec) = explode(" ", microtime());
 
-        $this->startTime = ((float) $usec + (float) $string_ec);
+        $this->startTime = ((float) $usec + (float) $this->string_ec);
         $this->startMemory = memory_get_usage();
     }
 
     protected function stop($time_itle)
     {
 
-        list($usec, $string_ec) = explode(" ", microtime());
-        $time = ((float) $usec + (float) $string_ec) - $this->startTime;
+        list($usec, $this->string_ec) = explode(" ", microtime());
+        $time = ((float) $usec + (float) $this->string_ec) - $this->startTime;
+        $memory = memory_get_usage();
         echo str_pad($time_itle, 23) . " : " . number_format($time, 5) . " sec et ";
         $this->totalTime += $time;
-        unset($time, $usec, $string_ec);
-        echo $this->convert(memory_get_usage());
-        $this->totalMemory +=memory_get_usage();
+        unset($time, $usec, $this->string_ec);
+        echo $this->convert($memory);
+        $this->totalMemory += $memory;
     }
 
     protected function convert($size)
@@ -172,7 +169,7 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            str_replace('&', '&amp;', $string_1);
+            str_replace('&', '&amp;', $this->string_1);
 
         $this->stop('str_replace');
     }
@@ -182,7 +179,7 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times_slow_function; $i++)
-            preg_replace("#(^|\s)(http[s]?://\w+[^\s\[\]\<]+)#i", '\1<a href="\2">\2</a>', $string_6);
+            preg_replace("#(^|\s)(http[s]?://\w+[^\s\[\]\<]+)#i", '\1<a href="\2">\2</a>', $this->string_6);
 
         $this->stop('preg_replace');
     }
@@ -192,7 +189,7 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            preg_match("#http[s]?://\w+[^\s\[\]\<]+#", $string_6);
+            preg_match("#http[s]?://\w+[^\s\[\]\<]+#", $this->string_6);
 
         $this->stop('preg_match');
     }
@@ -236,7 +233,7 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            strlen($string_1);
+            strlen($this->string_1);
 
         $this->stop('strlen');
     }
@@ -246,7 +243,7 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            sprintf($string_7, $i, $string_5, $i);
+            sprintf($this->string_7, $i, $this->string_5, $i);
 
         $this->stop('sprintf');
     }
@@ -256,7 +253,7 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            strcmp($string_7, $string_8);
+            strcmp($this->string_7, $this->string_8);
 
         $this->stop('strcmp');
     }
@@ -266,7 +263,7 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            trim($string_2);
+            trim($this->string_2);
 
         $this->stop('trim');
     }
@@ -276,7 +273,7 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times_slow_function; $i++)
-            explode('&', $string_1);
+            explode('&', $this->string_1);
 
         $this->stop('explode');
     }
@@ -318,7 +315,7 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            strpos($string_2, 't');
+            strpos($this->string_2, 't');
 
         $this->stop('strpos');
     }
@@ -328,7 +325,7 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            substr($string_1, 10);
+            substr($this->string_1, 10);
 
         $this->stop('substr');
     }
@@ -338,7 +335,7 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            intval($string_4);
+            intval($this->string_4);
 
         $this->stop('intval');
     }
@@ -348,7 +345,7 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            (int) $string_4;
+            (int) $this->string_4;
 
         $this->stop('(int)');
     }
@@ -361,7 +358,7 @@ class benchmarkTimer
 
             is_array($array_1);
 
-            is_array($string_1);
+            is_array($this->string_1);
         }
 
         $this->stop('is_array');
@@ -375,7 +372,7 @@ class benchmarkTimer
 
             is_numeric($f1);
 
-            is_numeric($string_4);
+            is_numeric($this->string_4);
         }
 
         $this->stop('is_numeric');
@@ -389,7 +386,7 @@ class benchmarkTimer
 
             is_int($f1);
 
-            is_int($string_4);
+            is_int($this->string_4);
         }
 
         $this->stop('is_int');
@@ -403,7 +400,7 @@ class benchmarkTimer
 
             is_string($f1);
 
-            is_string($string_4);
+            is_string($this->string_4);
         }
 
         $this->stop('is_string');
@@ -464,7 +461,7 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            strtolower($string_3);
+            strtolower($this->string_3);
 
         $this->stop('strtolower');
     }
@@ -474,7 +471,7 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            strtoupper($string_1);
+            strtoupper($this->string_1);
 
         $this->stop('strtoupper');
     }
@@ -484,7 +481,7 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            md5($string_1);
+            md5($this->string_1);
 
         $this->stop('md5');
     }
@@ -518,19 +515,19 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            urlencode($string_1);
+            urlencode($this->string_1);
 
         $this->stop('urlencode');
     }
 
     public function benchmarkUrldecode()
     {
-        $string_1e = urlencode($string_1);
+        $this->string_1e = urlencode($this->string_1);
 
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            urldecode($string_1e);
+            urldecode($this->string_1e);
 
         $this->stop('urldecode');
     }
@@ -540,14 +537,14 @@ class benchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            addslashes($string_9);
+            addslashes($this->string_9);
 
         $this->stop('addslashes');
     }
 
     public function benchmarkStripslashes()
     {
-        $string_9e = addslashes($string_9);
+        $string_9e = addslashes($this->string_9);
 
         $this->start();
 
