@@ -74,17 +74,19 @@ class BenchmarkTimer
         list($usec, $this->string_ec) = explode(" ", microtime());
         $time = ((float) $usec + (float) $this->string_ec) - $this->startTime;
         $memory = memory_get_usage();
+//	$memory -= $this->startMemory;
         echo str_pad($time_itle, 23) . " : " . number_format($time, 5) . " sec et ";
         $this->totalTime += $time;
         unset($time, $usec, $this->string_ec);
-        echo $this->convert($memory - $this->startMemory);
-        $this->totalMemory += $memory - $this->startMemory;
+        $delta = $memory- $this->startMemory;
+	echo $this->convert($delta);
+        $this->totalMemory += $delta;
     }
 
     protected function convert($size)
     {
         $unit = array('b', 'kb', 'mb', 'gb', 'tb', 'pb');
-        return @round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . ' ' . $unit[$i] . "\n";
+        return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . ' ' . $unit[$i] . "\n";
     }
 
     public function benchmarkFor()
