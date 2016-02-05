@@ -65,7 +65,7 @@ class BenchmarkTimer
         list($usec, $this->string_ec) = explode(" ", microtime());
 
         $this->startTime = ((float) $usec + (float) $this->string_ec);
-        $this->startMemory = memory_get_usage();
+        $this->startMemory = memory_get_usage(true);
     }
 
     protected function stop($time_itle)
@@ -73,12 +73,14 @@ class BenchmarkTimer
 
         list($usec, $this->string_ec) = explode(" ", microtime());
         $time = ((float) $usec + (float) $this->string_ec) - $this->startTime;
-        $memory = memory_get_usage();
+        $memory = memory_get_usage(true);
 //	$memory -= $this->startMemory;
         echo str_pad($time_itle, 23) . " : " . number_format($time, 5) . " sec et ";
         $this->totalTime += $time;
         unset($time, $usec, $this->string_ec);
         $delta = $memory- $this->startMemory;
+	echo $memory . " - " . $this->startMemory.  " " .$delta . " ";
+echo memory_get_peak_usage(), " ";
 	echo $this->convert($delta);
         $this->totalMemory += $delta;
     }
