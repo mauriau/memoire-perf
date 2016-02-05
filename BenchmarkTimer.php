@@ -105,8 +105,8 @@ echo memory_get_peak_usage(), " ";
     {
         $this->start();
 
-        while ($i > 0)
-            --$i;
+        while ($i < $this->run_times)
+            $i++;
 
         $this->stop('while');
     }
@@ -294,12 +294,11 @@ echo memory_get_peak_usage(), " ";
 
     public function benchmarkNumberFormat()
     {
-        $f1 = $this->totalTime;
 
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            number_format($f1, 3);
+            number_format($this->totalTime, 3);
 
         $this->stop('number_format');
     }
@@ -309,7 +308,7 @@ echo memory_get_peak_usage(), " ";
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            floor($f1);
+            floor($this->totalTime);
 
         $this->stop('floor');
     }
@@ -374,7 +373,7 @@ echo memory_get_peak_usage(), " ";
 
         for ($i = 0; $i < $this->run_times; $i++) {
 
-            is_numeric($f1);
+            is_numeric($this->totalTime);
 
             is_numeric($this->string_4);
         }
@@ -388,7 +387,7 @@ echo memory_get_peak_usage(), " ";
 
         for ($i = 0; $i < $this->run_times; $i++) {
 
-            is_int($f1);
+            is_int($this->totalTime);
 
             is_int($this->string_4);
         }
@@ -402,7 +401,7 @@ echo memory_get_peak_usage(), " ";
 
         for ($i = 0; $i < $this->run_times; $i++) {
 
-            is_string($f1);
+            is_string($this->totalTime);
 
             is_string($this->string_4);
         }
@@ -455,7 +454,7 @@ echo memory_get_peak_usage(), " ";
         $this->start();
 
         for ($i = 0; $i < $this->run_times_slow_function; $i++)
-            strtotime($time_1);
+            strtotime($this->time_1);
 
         $this->stop('strtotime');
     }
