@@ -2,7 +2,11 @@
 
 // php benchmarker by Paul Taulborg (njaguar at http://forums.d2jsp.org) - Modified by Jeroen Post
 
-class BenchmarkTimer
+$timer = new benchmarkTimer();
+
+exit; // all done
+
+class benchmarkTimer
 {
 
     public $startTime;
@@ -29,33 +33,19 @@ class BenchmarkTimer
     {
         $head = str_pad("#", 36, "#");
         echo "<pre>" . str_pad(' PHP ' . PHP_VERSION . ' BENCHMARK ', 36, "#", STR_PAD_BOTH) . "\nStart : " . date("m/d/Y H:i:s a") . "\nServer : {$_SERVER['SERVER_NAME']}@{$_SERVER['SERVER_ADDR']}\nPlatform : " . PHP_OS . "\nPHP version: " . phpversion() . "\n$head\n";
-        echo 'Fonctions ' . str_pad("#", 15, "#") . ' temps ' . str_pad("#", 5, "#") . ' mémoire avant ## mémoire après ## pique ## delta ' . "\n";
+
         $this->string_3 = strtoupper($this->string_1);
         $this->string_8 = $this->string_7 . ' and then some';
         $this->now = time();
         $methods = get_class_methods($this);
         unset($methods[0], $methods[1], $methods[2], $methods[3]);
         $methods = array_values($methods);
-        foreach ($methods as $key => $method) {
-            $this->$method();
-        }
-#########################
-//        $test = [
-//            $methods[0],
-//            $methods[1],
-//            $methods[2],
-//            $methods[3],
-//            $methods[4],
-//            $methods[5],
-//            $methods[6],
-//        ];
-//        foreach ($test as $key => $method) {
+//        foreach ($methods as $key => $method) {
 //            $this->$method();
-//            $this->$methods[$key]();
 //        }
-//        for ($i = 0; $i < 5; $i++) {
-//            $this->$methods[$i]();
-//        }
+        for ($i = 0; $i< 5; $i++){
+            $this->$methods[$i]();
+        }
         echo $head . "\n" . str_pad("Total", 23) . " : " . number_format($this->totalTime, 3) . " sec</pre>\n";
         echo $head . "\n" . $this->convert($this->totalMemory);
     }
@@ -63,43 +53,28 @@ class BenchmarkTimer
     protected function start()
     {
 // use this method, because old php 4.x branches do not support the parameter to return a float
-        list($usec, $this->string_ec) = explode(" ", microtime());
+        list($usec, $string_ec) = explode(" ", microtime());
 
-        $this->startTime = ((float) $usec + (float) $this->string_ec);
-        $this->startMemory = memory_get_usage(true);
+        $this->startTime = ((float) $usec + (float) $string_ec);
+        $this->startMemory = memory_get_usage();
     }
 
-    protected function stop($pick, $time_itle)
+    protected function stop($time_itle)
     {
-        $memory = memory_get_usage(true);
 
-        list($usec, $this->string_ec) = explode(" ", microtime());
-        $time = ((float) $usec + (float) $this->string_ec) - $this->startTime;
-//	$memory -= $this->startMemory;
+        list($usec, $string_ec) = explode(" ", microtime());
+        $time = ((float) $usec + (float) $string_ec) - $this->startTime;
         echo str_pad($time_itle, 23) . " : " . number_format($time, 5) . " sec et ";
         $this->totalTime += $time;
-        unset($time, $usec, $this->string_ec);
-        $delta = $memory - $this->startMemory;
-        echo $this->startMemory . ' ##### ';
-        echo $memory . ' ####### ';
-        echo $pick . " ### ";
-        echo $this->convert($delta) . "\n";
-        $this->totalMemory += $delta;
+        unset($time, $usec, $string_ec);
+        echo $this->convert(memory_get_usage());
+        $this->totalMemory +=memory_get_usage();
     }
 
-    protected function convert($bytes, $precision = 2)
+    protected function convert($size)
     {
-        $units = array('B', 'KB', 'MB', 'GB', 'TB');
-
-        $bytes = max($bytes, 0);
-        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-        $pow = min($pow, count($units) - 1);
-
-        // Uncomment one of the following alternatives
-        // $bytes /= pow(1024, $pow);
-        // $bytes /= (1 << (10 * $pow)); 
-
-        return @round($bytes, $precision) . ' ' . $units[$pow];
+        $unit = array('b', 'kb', 'mb', 'gb', 'tb', 'pb');
+        return @round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . ' ' . $unit[$i] . "\n";
     }
 
     public function benchmarkFor()
@@ -108,19 +83,18 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; ++$i)
             ;
-        $pick = memory_get_peak_usage(true);
 
-        $this->stop($pick, 'for');
+        $this->stop('for');
     }
 
     public function benchmarkWhile()
     {
         $this->start();
-        $i = 0;
-        while ($i < $this->run_times)
-            $i++;
-        $pick = memory_get_peak_usage(true);
-        $this->stop($pick, 'while');
+
+        while ($i > 0)
+            --$i;
+
+        $this->stop('while');
     }
 
     public function benchmarkIfElse()
@@ -141,9 +115,8 @@ class BenchmarkTimer
                 
             }
         }
-        $pick = memory_get_peak_usage(true);
 
-        $this->stop($pick, 'if else');
+        $this->stop('if else');
     }
 
     public function benchmarkSwitch()
@@ -165,9 +138,8 @@ class BenchmarkTimer
                 default: break;
             }
         }
-        $pick = memory_get_peak_usage(true);
 
-        $this->stop($pick, 'switch');
+        $this->stop('switch');
     }
 
     public function benchmarkTernaire()
@@ -178,9 +150,8 @@ class BenchmarkTimer
 
             $z = ($i % 2 == 0 ? 1 : 0);
         }
-        $pick = memory_get_peak_usage(true);
 
-        $this->stop($pick, 'Ternary');
+        $this->stop('Ternary');
     }
 
     public function benchmarkStrReplace()
@@ -188,10 +159,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            str_replace('&', '&amp;', $this->string_1);
-        $pick = memory_get_peak_usage(true);
+            str_replace('&', '&amp;', $string_1);
 
-        $this->stop($pick, 'str_replace');
+        $this->stop('str_replace');
     }
 
     public function benchmarkPregReplace()
@@ -199,10 +169,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times_slow_function; $i++)
-            preg_replace("#(^|\s)(http[s]?://\w+[^\s\[\]\<]+)#i", '\1<a href="\2">\2</a>', $this->string_6);
-        $pick = memory_get_peak_usage(true);
+            preg_replace("#(^|\s)(http[s]?://\w+[^\s\[\]\<]+)#i", '\1<a href="\2">\2</a>', $string_6);
 
-        $this->stop($pick, 'preg_replace');
+        $this->stop('preg_replace');
     }
 
     public function benchmarkPregMatch()
@@ -210,10 +179,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            preg_match("#http[s]?://\w+[^\s\[\]\<]+#", $this->string_6);
-        $pick = memory_get_peak_usage(true);
+            preg_match("#http[s]?://\w+[^\s\[\]\<]+#", $string_6);
 
-        $this->stop($pick, 'preg_match');
+        $this->stop('preg_match');
     }
 
     public function benchmarkCount()
@@ -221,10 +189,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            count($this->array_1);
-        $pick = memory_get_peak_usage(true);
+            count($array_1);
 
-        $this->stop($pick, 'count');
+        $this->stop('count');
     }
 
     public function benchmarkIsset()
@@ -233,13 +200,12 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++) {
 
-            isset($this->array_1['i']);
+            isset($array_1['i']);
 
-            isset($this->array_1['zzNozz']);
+            isset($array_1['zzNozz']);
         }
-        $pick = memory_get_peak_usage(true);
 
-        $this->stop($pick, 'isset');
+        $this->stop('isset');
     }
 
     public function benchmarkTime()
@@ -248,9 +214,8 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             time();
-        $pick = memory_get_peak_usage(true);
 
-        $this->stop($pick, 'time');
+        $this->stop('time');
     }
 
     public function benchmarkStrlen()
@@ -258,10 +223,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            strlen($this->string_1);
-        $pick = memory_get_peak_usage(true);
+            strlen($string_1);
 
-        $this->stop($pick, 'strlen');
+        $this->stop('strlen');
     }
 
     public function benchmarkSprintf()
@@ -269,10 +233,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            sprintf($this->string_7, $i, $this->string_5, $i);
-        $pick = memory_get_peak_usage(true);
+            sprintf($string_7, $i, $string_5, $i);
 
-        $this->stop($pick, 'sprintf');
+        $this->stop('sprintf');
     }
 
     public function benchmarkStrcmp()
@@ -280,10 +243,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            strcmp($this->string_7, $this->string_8);
-        $pick = memory_get_peak_usage(true);
+            strcmp($string_7, $string_8);
 
-        $this->stop($pick, 'strcmp');
+        $this->stop('strcmp');
     }
 
     public function benchmarkTrim()
@@ -291,10 +253,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            trim($this->string_2);
-        $pick = memory_get_peak_usage(true);
+            trim($string_2);
 
-        $this->stop($pick, 'trim');
+        $this->stop('trim');
     }
 
     public function benchmarkExplode()
@@ -302,10 +263,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times_slow_function; $i++)
-            explode('&', $this->string_1);
-        $pick = memory_get_peak_usage(true);
+            explode('&', $string_1);
 
-        $this->stop($pick, 'explode');
+        $this->stop('explode');
     }
 
     public function benchmarkImplode()
@@ -313,22 +273,21 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            implode('&', $this->array_1);
-        $pick = memory_get_peak_usage(true);
+            implode('&', $array_1);
 
-        $this->stop($pick, 'implode');
+        $this->stop('implode');
     }
 
     public function benchmarkNumberFormat()
     {
+        $f1 = $this->totalTime;
 
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            number_format($this->totalTime, 3);
-        $pick = memory_get_peak_usage(true);
+            number_format($f1, 3);
 
-        $this->stop($pick, 'number_format');
+        $this->stop('number_format');
     }
 
     public function benchmarkFloor()
@@ -336,10 +295,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            floor($this->totalTime);
-        $pick = memory_get_peak_usage(true);
+            floor($f1);
 
-        $this->stop($pick, 'floor');
+        $this->stop('floor');
     }
 
     public function benchmarkStrpos()
@@ -347,10 +305,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            strpos($this->string_2, 't');
-        $pick = memory_get_peak_usage(true);
+            strpos($string_2, 't');
 
-        $this->stop($pick, 'strpos');
+        $this->stop('strpos');
     }
 
     public function benchmarkSubstr()
@@ -358,10 +315,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            substr($this->string_1, 10);
-        $pick = memory_get_peak_usage(true);
+            substr($string_1, 10);
 
-        $this->stop($pick, 'substr');
+        $this->stop('substr');
     }
 
     public function benchmarkIntval()
@@ -369,10 +325,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            intval($this->string_4);
-        $pick = memory_get_peak_usage(true);
+            intval($string_4);
 
-        $this->stop($pick, 'intval');
+        $this->stop('intval');
     }
 
     public function benchmarkInt()
@@ -380,10 +335,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            (int) $this->string_4;
-        $pick = memory_get_peak_usage(true);
+            (int) $string_4;
 
-        $this->stop($pick, '(int)');
+        $this->stop('(int)');
     }
 
     public function benchmarkIsArray()
@@ -392,13 +346,12 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++) {
 
-            is_array($this->array_1);
+            is_array($array_1);
 
-            is_array($this->string_1);
+            is_array($string_1);
         }
-        $pick = memory_get_peak_usage(true);
 
-        $this->stop($pick, 'is_array');
+        $this->stop('is_array');
     }
 
     public function benchmarkIsNumeric()
@@ -407,13 +360,12 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++) {
 
-            is_numeric($this->totalTime);
+            is_numeric($f1);
 
-            is_numeric($this->string_4);
+            is_numeric($string_4);
         }
-        $pick = memory_get_peak_usage(true);
 
-        $this->stop($pick, 'is_numeric');
+        $this->stop('is_numeric');
     }
 
     public function benchmarkIsInt()
@@ -422,13 +374,12 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++) {
 
-            is_int($this->totalTime);
+            is_int($f1);
 
-            is_int($this->string_4);
+            is_int($string_4);
         }
-        $pick = memory_get_peak_usage(true);
 
-        $this->stop($pick, 'is_int');
+        $this->stop('is_int');
     }
 
     public function benchmarkIsString()
@@ -437,13 +388,12 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++) {
 
-            is_string($this->totalTime);
+            is_string($f1);
 
-            is_string($this->string_4);
+            is_string($string_4);
         }
-        $pick = memory_get_peak_usage(true);
 
-        $this->stop($pick, 'is_string');
+        $this->stop('is_string');
     }
 
     public function benchmarkIp2long()
@@ -452,9 +402,8 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             ip2long('1.2.3.4');
-        $pick = memory_get_peak_usage(true);
 
-        $this->stop($pick, 'ip2long');
+        $this->stop('ip2long');
     }
 
     public function benchmarklong2ip()
@@ -463,9 +412,8 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             long2ip(89851921);
-        $pick = memory_get_peak_usage(true);
 
-        $this->stop($pick, 'long2ip');
+        $this->stop('long2ip');
     }
 
     public function benchmarkDate()
@@ -474,9 +422,8 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times_slow_function; $i++)
             date('F j, Y, g:i a', $this->now);
-        $pick = memory_get_peak_usage(true);
 
-        $this->stop($pick, 'date');
+        $this->stop('date');
     }
 
     public function benchmarkStrftime()
@@ -485,9 +432,8 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times_slow_function; $i++)
             strftime('%B %e, %Y, %l:%M %P', $this->now);
-        $pick = memory_get_peak_usage(true);
 
-        $this->stop($pick, 'strftime');
+        $this->stop('strftime');
     }
 
     public function benchmarkStrtotime()
@@ -495,10 +441,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times_slow_function; $i++)
-            strtotime($this->time_1);
-        $pick = memory_get_peak_usage(true);
+            strtotime($time_1);
 
-        $this->stop($pick, 'strtotime');
+        $this->stop('strtotime');
     }
 
     public function benchmarkStrtolower()
@@ -506,10 +451,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            strtolower($this->string_3);
-        $pick = memory_get_peak_usage(true);
+            strtolower($string_3);
 
-        $this->stop($pick, 'strtolower');
+        $this->stop('strtolower');
     }
 
     public function benchmarkStrtoupper()
@@ -517,10 +461,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            strtoupper($this->string_1);
-        $pick = memory_get_peak_usage(true);
+            strtoupper($string_1);
 
-        $this->stop($pick, 'strtoupper');
+        $this->stop('strtoupper');
     }
 
     public function benchmarkMd5()
@@ -528,10 +471,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            md5($this->string_1);
-        $pick = memory_get_peak_usage(true);
+            md5($string_1);
 
-        $this->stop($pick, 'md5');
+        $this->stop('md5');
     }
 
     public function benchmarkUnset()
@@ -540,13 +482,12 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++) {
 
-            unset($this->array_1['j']);
+            unset($array_1['j']);
 
-            $this->array_1['j'] = 0;
+            $array_1['j'] = 0;
         }
-        $pick = memory_get_peak_usage(true);
 
-        $this->stop($pick, 'unset');
+        $this->stop('unset');
     }
 
     public function benchmarkList()
@@ -554,10 +495,9 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            list($drink, $this->run_timesolor, $power) = $this->array_2;
-        $pick = memory_get_peak_usage(true);
+            list($drink, $this->run_timesolor, $power) = $array_2;
 
-        $this->stop($pick, 'list');
+        $this->stop('list');
     }
 
     public function benchmarkUrlencode()
@@ -565,23 +505,21 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            urlencode($this->string_1);
-        $pick = memory_get_peak_usage(true);
+            urlencode($string_1);
 
-        $this->stop($pick, 'urlencode');
+        $this->stop('urlencode');
     }
 
     public function benchmarkUrldecode()
     {
-        $this->string_1e = urlencode($this->string_1);
+        $string_1e = urlencode($string_1);
 
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            urldecode($this->string_1e);
-        $pick = memory_get_peak_usage(true);
+            urldecode($string_1e);
 
-        $this->stop($pick, 'urldecode');
+        $this->stop('urldecode');
     }
 
     public function benchmarkAddslashes()
@@ -589,23 +527,21 @@ class BenchmarkTimer
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            addslashes($this->string_9);
-        $pick = memory_get_peak_usage(true);
+            addslashes($string_9);
 
-        $this->stop($pick, 'addslashes');
+        $this->stop('addslashes');
     }
 
     public function benchmarkStripslashes()
     {
-        $string_9e = addslashes($this->string_9);
+        $string_9e = addslashes($string_9);
 
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
             stripslashes($string_9e);
-        $pick = memory_get_peak_usage(true);
 
-        $this->stop($pick, 'stripslashes');
+        $this->stop('stripslashes');
     }
 
 }
