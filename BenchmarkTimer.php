@@ -24,54 +24,43 @@ class BenchmarkTimer
     public $array_2 = array('coffee', 'brown', 'caffeine');
     public $time_1 = '12/29/2011 10:15:37pm';
     public $now;
+    public $real = false;
 
-    public function __construct()
+    public function __construct($callFct = false)
     {
-        $head = str_pad("#", 36, "#");
-        echo "<pre>" . str_pad(' PHP ' . PHP_VERSION . ' BENCHMARK ', 36, "#", STR_PAD_BOTH) . "\nStart : " . date("m/d/Y H:i:s a") . "\nServer : {$_SERVER['SERVER_NAME']}@{$_SERVER['SERVER_ADDR']}\nPlatform : " . PHP_OS . "\nPHP version: " . phpversion() . "\n$head\n";
-        echo 'Fonctions ' . str_pad("#", 15, "#") . ' temps ' . str_pad("#", 5, "#") . ' mémoire avant ## mémoire après ## pique ## delta ' . "\n";
         $this->string_3 = strtoupper($this->string_1);
         $this->string_8 = $this->string_7 . ' and then some';
         $this->now = time();
-        $methods = get_class_methods($this);
-        unset($methods[0], $methods[1], $methods[2], $methods[3]);
-        $methods = array_values($methods);
-        foreach ($methods as $key => $method) {
-            $this->$method();
+        $head = str_pad("#", 36, "#");
+
+        echo "<pre>" . str_pad(' PHP ' . PHP_VERSION . ' BENCHMARK ', 36, "#", STR_PAD_BOTH) . "\nStart : " . date("m/d/Y H:i:s a") . "\nServer : {$_SERVER['SERVER_NAME']}@{$_SERVER['SERVER_ADDR']}\nPlatform : " . PHP_OS . "\nPHP version: " . phpversion() . "\n$head\n";
+        echo 'Memory limit: ' . ini_get('memory_limit') . "\n";
+        echo 'Fonctions ' . str_pad("#", 15, "#") . ' temps ' . str_pad("#", 5, "#") . ' mémoire avant ## mémoire après ## pique ## delta ' . "\n";
+
+        if (true == $callFct) {
+            $methods = get_class_methods($this);
+            unset($methods[0], $methods[1], $methods[2], $methods[3]);
+            $methods = array_values($methods);
+            foreach ($methods as $key => $method) {
+                $this->$method();
+            }
+            echo $head . "\n" . str_pad("Total", 23) . " : " . number_format($this->totalTime, 3) . " sec</pre>\n";
+            echo $head . "\n" . $this->convert($this->totalMemory);
         }
-#########################
-//        $test = [
-//            $methods[0],
-//            $methods[1],
-//            $methods[2],
-//            $methods[3],
-//            $methods[4],
-//            $methods[5],
-//            $methods[6],
-//        ];
-//        foreach ($test as $key => $method) {
-//            $this->$method();
-//            $this->$methods[$key]();
-//        }
-//        for ($i = 0; $i < 5; $i++) {
-//            $this->$methods[$i]();
-//        }
-        echo $head . "\n" . str_pad("Total", 23) . " : " . number_format($this->totalTime, 3) . " sec</pre>\n";
-        echo $head . "\n" . $this->convert($this->totalMemory);
     }
 
-    protected function start()
+    public function start($memory = null)
     {
 // use this method, because old php 4.x branches do not support the parameter to return a float
         list($usec, $this->string_ec) = explode(" ", microtime());
 
         $this->startTime = ((float) $usec + (float) $this->string_ec);
-        $this->startMemory = memory_get_usage(true);
+        $this->startMemory = !empty($memory) ? $memory : memory_get_usage($this->real);
     }
 
-    protected function stop($pick, $time_itle)
+    public function stop($pick, $time_itle)
     {
-        $memory = memory_get_usage(true);
+        $memory = memory_get_usage($this->real);
 
         list($usec, $this->string_ec) = explode(" ", microtime());
         $time = ((float) $usec + (float) $this->string_ec) - $this->startTime;
@@ -87,19 +76,14 @@ class BenchmarkTimer
         $this->totalMemory += $delta;
     }
 
-    protected function convert($bytes, $precision = 2)
+    protected function convert($bytes)
     {
-        $units = array('B', 'KB', 'MB', 'GB', 'TB');
-
-        $bytes = max($bytes, 0);
-        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-        $pow = min($pow, count($units) - 1);
-
-        // Uncomment one of the following alternatives
-        // $bytes /= pow(1024, $pow);
-        // $bytes /= (1 << (10 * $pow)); 
-
-        return @round($bytes, $precision) . ' ' . $units[$pow];
+        if ($bytes < 1024)
+            return $bytes . " B";
+        elseif ($bytes < 1048576)
+            return round($bytes / 1024, 2) . " KB";
+        else
+            return round($bytes / 1048576, 2) . " MB";
     }
 
     public function benchmarkFor()
@@ -108,7 +92,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; ++$i)
             ;
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'for');
     }
@@ -119,7 +103,7 @@ class BenchmarkTimer
         $i = 0;
         while ($i < $this->run_times)
             $i++;
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
         $this->stop($pick, 'while');
     }
 
@@ -141,7 +125,7 @@ class BenchmarkTimer
                 
             }
         }
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'if else');
     }
@@ -165,7 +149,7 @@ class BenchmarkTimer
                 default: break;
             }
         }
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'switch');
     }
@@ -178,7 +162,7 @@ class BenchmarkTimer
 
             $z = ($i % 2 == 0 ? 1 : 0);
         }
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'Ternary');
     }
@@ -189,7 +173,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             str_replace('&', '&amp;', $this->string_1);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'str_replace');
     }
@@ -200,7 +184,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times_slow_function; $i++)
             preg_replace("#(^|\s)(http[s]?://\w+[^\s\[\]\<]+)#i", '\1<a href="\2">\2</a>', $this->string_6);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'preg_replace');
     }
@@ -211,7 +195,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             preg_match("#http[s]?://\w+[^\s\[\]\<]+#", $this->string_6);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'preg_match');
     }
@@ -222,7 +206,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             count($this->array_1);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'count');
     }
@@ -237,7 +221,7 @@ class BenchmarkTimer
 
             isset($this->array_1['zzNozz']);
         }
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'isset');
     }
@@ -248,7 +232,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             time();
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'time');
     }
@@ -259,7 +243,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             strlen($this->string_1);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'strlen');
     }
@@ -270,7 +254,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             sprintf($this->string_7, $i, $this->string_5, $i);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'sprintf');
     }
@@ -281,7 +265,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             strcmp($this->string_7, $this->string_8);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'strcmp');
     }
@@ -292,7 +276,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             trim($this->string_2);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'trim');
     }
@@ -303,7 +287,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times_slow_function; $i++)
             explode('&', $this->string_1);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'explode');
     }
@@ -314,7 +298,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             implode('&', $this->array_1);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'implode');
     }
@@ -326,7 +310,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             number_format($this->totalTime, 3);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'number_format');
     }
@@ -337,7 +321,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             floor($this->totalTime);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'floor');
     }
@@ -348,7 +332,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             strpos($this->string_2, 't');
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'strpos');
     }
@@ -359,7 +343,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             substr($this->string_1, 10);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'substr');
     }
@@ -370,7 +354,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             intval($this->string_4);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'intval');
     }
@@ -381,7 +365,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             (int) $this->string_4;
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, '(int)');
     }
@@ -396,7 +380,7 @@ class BenchmarkTimer
 
             is_array($this->string_1);
         }
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'is_array');
     }
@@ -411,7 +395,7 @@ class BenchmarkTimer
 
             is_numeric($this->string_4);
         }
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'is_numeric');
     }
@@ -426,7 +410,7 @@ class BenchmarkTimer
 
             is_int($this->string_4);
         }
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'is_int');
     }
@@ -441,7 +425,7 @@ class BenchmarkTimer
 
             is_string($this->string_4);
         }
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'is_string');
     }
@@ -452,7 +436,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             ip2long('1.2.3.4');
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'ip2long');
     }
@@ -463,7 +447,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             long2ip(89851921);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'long2ip');
     }
@@ -474,7 +458,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times_slow_function; $i++)
             date('F j, Y, g:i a', $this->now);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'date');
     }
@@ -485,7 +469,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times_slow_function; $i++)
             strftime('%B %e, %Y, %l:%M %P', $this->now);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'strftime');
     }
@@ -496,7 +480,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times_slow_function; $i++)
             strtotime($this->time_1);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'strtotime');
     }
@@ -507,7 +491,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             strtolower($this->string_3);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'strtolower');
     }
@@ -518,7 +502,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             strtoupper($this->string_1);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'strtoupper');
     }
@@ -529,7 +513,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             md5($this->string_1);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'md5');
     }
@@ -544,7 +528,7 @@ class BenchmarkTimer
 
             $this->array_1['j'] = 0;
         }
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'unset');
     }
@@ -555,7 +539,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             list($drink, $this->run_timesolor, $power) = $this->array_2;
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'list');
     }
@@ -566,7 +550,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             urlencode($this->string_1);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'urlencode');
     }
@@ -579,7 +563,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             urldecode($this->string_1e);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'urldecode');
     }
@@ -590,7 +574,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             addslashes($this->string_9);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'addslashes');
     }
@@ -603,7 +587,7 @@ class BenchmarkTimer
 
         for ($i = 0; $i < $this->run_times; $i++)
             stripslashes($string_9e);
-        $pick = memory_get_peak_usage(true);
+        $pick = memory_get_peak_usage($this->real);
 
         $this->stop($pick, 'stripslashes');
     }
