@@ -203,7 +203,7 @@ echo memory_get_peak_usage(), " ";
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            count($this->array_1);
+            count($array_1);
 
         $this->stop('count');
     }
@@ -214,9 +214,9 @@ echo memory_get_peak_usage(), " ";
 
         for ($i = 0; $i < $this->run_times; $i++) {
 
-            isset($this->array_1['i']);
+            isset($array_1['i']);
 
-            isset($this->array_1['zzNozz']);
+            isset($array_1['zzNozz']);
         }
 
         $this->stop('isset');
@@ -287,7 +287,7 @@ echo memory_get_peak_usage(), " ";
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            implode('&', $this->array_1);
+            implode('&', $array_1);
 
         $this->stop('implode');
     }
@@ -359,7 +359,7 @@ echo memory_get_peak_usage(), " ";
 
         for ($i = 0; $i < $this->run_times; $i++) {
 
-            is_array($this->array_1);
+            is_array($array_1);
 
             is_array($this->string_1);
         }
@@ -495,9 +495,9 @@ echo memory_get_peak_usage(), " ";
 
         for ($i = 0; $i < $this->run_times; $i++) {
 
-            unset($this->array_1['j']);
+            unset($array_1['j']);
 
-            $this->array_1['j'] = 0;
+            $array_1['j'] = 0;
         }
 
         $this->stop('unset');
@@ -508,7 +508,7 @@ echo memory_get_peak_usage(), " ";
         $this->start();
 
         for ($i = 0; $i < $this->run_times; $i++)
-            list($drink, $this->run_timesolor, $power) = $this->array_2;
+            list($drink, $this->run_timesolor, $power) = $array_2;
 
         $this->stop('list');
     }
