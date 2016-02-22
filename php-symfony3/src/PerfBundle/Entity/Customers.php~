@@ -1,0 +1,113 @@
+<?php
+
+namespace PerfBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Customers
+ *
+ * @ORM\Table(name="customers", indexes={@ORM\Index(name="salesRepEmployeeNumber", columns={"salesRepEmployeeNumber"})})
+ * @ORM\Entity
+ */
+class Customers
+{
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="customerName", type="string", length=50, nullable=false)
+     */
+    private $customername;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="contactLastName", type="string", length=50, nullable=false)
+     */
+    private $contactlastname;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="contactFirstName", type="string", length=50, nullable=false)
+     */
+    private $contactfirstname;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="phone", type="string", length=50, nullable=false)
+     */
+    private $phone;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="addressLine1", type="string", length=50, nullable=false)
+     */
+    private $addressline1;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="addressLine2", type="string", length=50, nullable=true)
+     */
+    private $addressline2;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="city", type="string", length=50, nullable=false)
+     */
+    private $city;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="state", type="string", length=50, nullable=true)
+     */
+    private $state;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="postalCode", type="string", length=15, nullable=true)
+     */
+    private $postalcode;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="country", type="string", length=50, nullable=false)
+     */
+    private $country;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="creditLimit", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $creditlimit;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="customerNumber", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $customernumber;
+
+    /**
+     * @var \PerfBundle\Entity\Employees
+     *
+     * @ORM\ManyToOne(targetEntity="PerfBundle\Entity\Employees")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="salesRepEmployeeNumber", referencedColumnName="employeeNumber")
+     * })
+     */
+    private $salesrepemployeenumber;
+
+
+}
+

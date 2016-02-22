@@ -1,0 +1,99 @@
+<?php
+
+namespace PerfBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Products
+ *
+ * @ORM\Table(name="products", indexes={@ORM\Index(name="productLine", columns={"productLine"})})
+ * @ORM\Entity
+ */
+class Products
+{
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="productName", type="string", length=70, nullable=false)
+     */
+    private $productname;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="productScale", type="string", length=10, nullable=false)
+     */
+    private $productscale;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="productVendor", type="string", length=50, nullable=false)
+     */
+    private $productvendor;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="productDescription", type="text", length=65535, nullable=false)
+     */
+    private $productdescription;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="quantityInStock", type="smallint", nullable=false)
+     */
+    private $quantityinstock;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="buyPrice", type="float", precision=10, scale=0, nullable=false)
+     */
+    private $buyprice;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="MSRP", type="float", precision=10, scale=0, nullable=false)
+     */
+    private $msrp;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="productCode", type="string", length=15)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $productcode;
+
+    /**
+     * @var \PerfBundle\Entity\Productlines
+     *
+     * @ORM\ManyToOne(targetEntity="PerfBundle\Entity\Productlines")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="productLine", referencedColumnName="productLine")
+     * })
+     */
+    private $productline;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="PerfBundle\Entity\Orders", mappedBy="productcode")
+     */
+    private $ordernumber;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->ordernumber = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+}
+

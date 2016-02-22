@@ -1,0 +1,47 @@
+<%- include layouts/header.ejs %>
+        <div class="page-data">
+         <div class="data-btn">
+           <button onClick="addOffices();">+ Add</button>
+         </div>
+         <div class="data-table">
+            <table border="1" cellpadding="7" cellspacing="7">
+                <tr>
+                    <th width="50px">No</th>
+                    <th>City</th>
+                    <th>Phone</th>
+                    <th>Adress</th>
+                    <th>State</th>
+                    <th>Country</th>
+                    <th>PostalCode</th>
+                    <th>Territory</th>
+                    <th width="120px">Action</th>
+                </tr>                               
+                <% if(data.length){ 
+                                
+                 for(var i = 0;i < data.length;i++) { %>                 
+                <tr>
+                    <td><%=(i+1)%></td>
+                    <td><%=data[i].city%></td>
+                    <td><%=data[i].phone%></td>
+                    <td><%=data[i].adress%></td>
+                    <td><%=data[i].state%></td>
+                    <td><%=data[i].country%></td>
+                    <td><%=data[i].postalCode%></td>
+                    <td><%=data[i].territory%></td>
+                    <td>
+                        <a class="a-inside edit" href="../offices/edit/<%=data[i].officeCode%>">Edit</a>                       
+                        <a class="a-inside delete" href="../offices/delete/<%=data[i].officeCode%>">Delete</a>                       
+                    </td>
+                </tr>
+            <% }
+            
+             }else{ %>
+                 <tr>
+                    <td colspan="3">No offices</td>
+                 </tr>
+            <% } %>
+                                                             
+            </table>
+         </div>
+        </div>        
+<%- include layouts/footer.ejs %>

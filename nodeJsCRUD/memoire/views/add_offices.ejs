@@ -1,0 +1,43 @@
+<%- include layouts/header.ejs %>
+
+        <div class="page-data">
+            
+            <form method="post" action="/offices/add">
+                <table cellpadding="11">
+                <tr>
+                    <td class="label">City</td><td>: <input type="text" name="city" required></td>
+                 </tr>
+                  <tr>
+                    <td class="label">Phone</td><td>: <input type="text" name="phone"  required></td>
+                 </tr>
+                 <tr>
+                    <td class="label" valign="top">Address</td>
+                    <td valign="top">: 
+                        <textarea name="addressLine1" required cols="30" rows="5"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">State</td><td>: <input type="text" name="state" required></td>
+                 </tr>
+                <tr>
+                    <td class="label">Country</td><td>: <input type="text" name="country"  required></td>
+                 </tr>
+                <tr>
+                    <td class="label">postal code</td><td>: <input type="text" name="postalCode"  required></td>
+                 </tr>
+                <tr>
+                    <td class="label">territory</td><td>: <input type="text"  name="territory" required></td>
+                 </tr>
+                 <tr>
+                    <td class="label"></td>
+                    <td>
+                        &nbsp; <input type="submit" name="submit" value="Save">
+                       <input type="button" name="cancel" value="Cancel" class="cancel" onClick="cancelAdd()">
+                    </td>
+                 </tr>
+                </table>
+            </form>
+            
+        </div>
+        
+<%- include layouts/footer.ejs %>

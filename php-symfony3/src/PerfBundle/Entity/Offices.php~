@@ -1,0 +1,82 @@
+<?php
+
+namespace PerfBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Offices
+ *
+ * @ORM\Table(name="offices")
+ * @ORM\Entity
+ */
+class Offices
+{
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="city", type="string", length=50, nullable=false)
+     */
+    private $city;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="phone", type="string", length=50, nullable=false)
+     */
+    private $phone;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="addressLine1", type="string", length=50, nullable=false)
+     */
+    private $addressline1;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="addressLine2", type="string", length=50, nullable=true)
+     */
+    private $addressline2;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="state", type="string", length=50, nullable=true)
+     */
+    private $state;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="country", type="string", length=50, nullable=false)
+     */
+    private $country;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="postalCode", type="string", length=15, nullable=false)
+     */
+    private $postalcode;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="territory", type="string", length=10, nullable=false)
+     */
+    private $territory;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="officeCode", type="string", length=10)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $officecode;
+
+
+}
+
