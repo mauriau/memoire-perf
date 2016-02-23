@@ -1,4 +1,4 @@
 <?php
 include 'BenchmarkTimer.php';
 
-$timer = new BenchmarkTimer();
+$timer = new BenchmarkTimer(true);
