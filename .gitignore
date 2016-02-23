@@ -36,3 +36,6 @@ php-symfony3/build/
 # Composer PHAR
 php-symfony3/composer.phar
 /nbproject/private/
+
+# ReactPHP
+reactPHP/vendor/
