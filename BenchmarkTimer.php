@@ -58,7 +58,7 @@ class BenchmarkTimer
         $this->startMemory = !empty($memory) ? $memory : memory_get_usage($this->real);
     }
 
-    public function stop($pick, $time_itle)
+    public function stop($pick, $time_itle = 'title')
     {
         $memory = memory_get_usage($this->real);
 
