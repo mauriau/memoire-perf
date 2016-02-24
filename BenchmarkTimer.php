@@ -1,6 +1,7 @@
 <?php
 
 // php benchmarker by Paul Taulborg (njaguar at http://forums.d2jsp.org) - Modified by Jeroen Post
+date_default_timezone_set('Europe/London');
 
 class BenchmarkTimer
 {
@@ -101,8 +102,9 @@ class BenchmarkTimer
     {
         $this->start();
         $i = 0;
-        while ($i < $this->run_times)
+        while ($i < $this->run_times) {
             $i++;
+        }
         $pick = memory_get_peak_usage($this->real);
         $this->stop($pick, 'while');
     }
